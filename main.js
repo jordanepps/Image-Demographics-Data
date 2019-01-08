@@ -8,9 +8,4 @@ $(function() {
 		.predict(appModel, img)
 		.then(res => console.log(res))
 		.catch(err => console.log(err));
-	fetch(
-		'https://www.linkedin.com/oauth/v2/accessToken?grant_type=client_credentials&client_id=78naoz3xrukept&client_secret=j23M3O7ubmP1AEA8'
-	)
-		.then(res => console.log(res))
-		.catch(err => console.log(err));
 });
