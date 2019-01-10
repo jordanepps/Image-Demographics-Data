@@ -16,4 +16,8 @@ $(function() {
 		.then(res => res.json())
 		.then(json => console.log(json))
 		.catch(err => console.log(err));
+	fetch('https://api.github.com/users/jordanepps')
+		.then(res => res.json())
+		.then(json => console.log(json.avatar_url))
+		.catch(err => console.log(err));
 });
