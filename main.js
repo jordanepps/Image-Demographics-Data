@@ -54,7 +54,7 @@ function handleFaceData(faceData) {
 	};
 	//Push each race object to larger face object
 	raceArray.forEach(race => {
-		let raceObj = { race: race.name, value: race.value };
+		const raceObj = { race: race.name, value: race.value };
 		obj.raceProbabilities.push(raceObj);
 	});
 	return obj;
