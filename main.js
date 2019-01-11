@@ -24,7 +24,6 @@ const FACES = [];
 // });
 
 function handleProbability(value, dataArr) {
-	console.log(dataArr);
 	const data = dataArr[0];
 	const obj = {
 		[value]: data.name,
@@ -35,30 +34,38 @@ function handleProbability(value, dataArr) {
 
 //Save demographics data as object for each face
 function handleFaceData(faceData) {
-	// console.log(faceData.data);
-	//Assign age array values to constant from json path
+	//Assign object values to constants from json path
 	const ageArray = faceData.data.face.age_appearance.concepts;
 	const genderArray = faceData.data.face.gender_appearance.concepts;
+	const raceArray = faceData.data.face.multicultural_appearance.concepts;
+	const boundingBox = faceData.region_info.bounding_box;
+	console.log(raceArray);
 	const obj = {
 		id: faceData.id,
 		ageProbability: handleProbability('age', ageArray),
 		genderProbability: handleProbability('gender', genderArray),
-		raceProbabilities: 0,
+		raceProbabilities: [],
 		boundingBox: {
-			bottomRow: faceData.region_info.bounding_box.bottom_row,
-			leftCol: faceData.region_info.bounding_box.left_col,
-			rightCol: faceData.region_info.bounding_box.right_col,
-			topRow: faceData.region_info.bounding_box.top_row
+			bottomRow: boundingBox.bottom_row,
+			leftCol: boundingBox.left_col,
+			rightCol: boundingBox.right_col,
+			topRow: boundingBox.top_row
 		}
 	};
+	//Push each race object to larger face object
+	raceArray.forEach(race => {
+		let raceObj = { race: race.name, value: race.value };
+		obj.raceProbabilities.push(raceObj);
+	});
 	return obj;
 }
 
 function handleDemoData(data) {
 	// console.log(data);
 	// console.log(data.outputs[0].data.regions);
+	const faceData = data.outputs[0].data.regions;
 	//Pushing facebox data with age, gender, race appearance data to array as objects
-	FACES.push(data.outputs[0].data.regions.map(handleFaceData));
+	FACES.push(faceData.map(handleFaceData));
 	console.log(FACES);
 }
 
