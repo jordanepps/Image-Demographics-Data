@@ -3,8 +3,6 @@ const appModel = 'c0c0ac362b03416da06ab3fa36fb58e3';
 const unsplashKey =
 	'ed6aecb09984de2f5a1170ed2c7c8247773472f3a719fd01ef4d220165c21ba0';
 const FACES = [];
-// const img =
-// 	'https://www.skintour.com/wp-content/uploads/2015/08/atikh-bana-203831-e1494369481993-624x428.jpg';
 
 // $(function() {
 // 	app.models
@@ -23,15 +21,24 @@ const FACES = [];
 // 		.catch(err => console.log(err));
 // });
 
-//Display image on page
-function displayImage(image) {
-	console.log('image displayed');
+/*
+
+IMAGES DON'T IMMEDIATELY LOAD IN CHROME UNLESS IT IS SUBMITTED AGAIN, WINDOW IS RESIZED, SETTINGS ARE OPENED, ETC!
+
+*/
+
+//Create Image Tag
+function createImgTag(imgSrc) {
 	const alt =
 		FACES[0].length > 1
 			? "A picture with people's faces"
 			: "A picture with a person's face";
-	const imgTag = `<img class="face-img" src=${image} alt="${alt}">`;
-	$('#js-image').html(imgTag);
+	return `<img class="js-face-img face-img" src=${imgSrc} alt=${alt}>`;
+}
+//Display image on page
+function displayImage(image) {
+	console.log('image displayed');
+	$('#js-image').html(createImgTag(image));
 }
 //Create function to adjust boundingbox data to fit box style
 //Create fucntion to display boxes over image on faces
