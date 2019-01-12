@@ -2,7 +2,11 @@ const app = new Clarifai.App({ apiKey: 'cfd1f224ea07473a8ba98dfffe07943c' });
 const appModel = 'c0c0ac362b03416da06ab3fa36fb58e3';
 const unsplashKey =
 	'ed6aecb09984de2f5a1170ed2c7c8247773472f3a719fd01ef4d220165c21ba0';
-const FACES = [];
+const IMAGEDATA = {
+	faces: [],
+	width: 0,
+	height: 0
+};
 
 // $(function() {
 // 	app.models
@@ -22,26 +26,61 @@ const FACES = [];
 // });
 
 /*
-
-IMAGES DON'T IMMEDIATELY LOAD IN CHROME UNLESS IT IS SUBMITTED AGAIN, WINDOW IS RESIZED, SETTINGS ARE OPENED, ETC!
-
+May have to call the function to set facebox on screen resize
+May want to add image src to IMAGEDATA and pull from that
 */
 
 //Create Image Tag
 function createImgTag(imgSrc) {
 	const alt =
-		FACES[0].length > 1
+		IMAGEDATA.faces[0].length > 1
 			? "A picture with people's faces"
 			: "A picture with a person's face";
 	return `<img class="js-face-img face-img" src=${imgSrc} alt=${alt}>`;
 }
 //Display image on page
-function displayImage(image) {
+function handleImage(image) {
 	console.log('image displayed');
 	$('#js-image').html(createImgTag(image));
 }
-//Adjust boundingbox data to fit box style
-//Display boxes over image on faces
+//Save width and height of image to IMAGEDATA
+function handleImageLoad() {
+	$('.js-face-img').on('load', () => {
+		console.log('image loaded');
+		IMAGEDATA.width = $('.js-face-img').width();
+		IMAGEDATA.height = $('.js-face-img').height();
+		loadFaceBox();
+	});
+}
+
+//Create data to make face box style
+function handlefaceboxData({ top, bottom, left, right }) {
+	const height = IMAGEDATA.height;
+	const width = IMAGEDATA.width;
+	const obj = {
+		top: top * height,
+		bottom: height - bottom * height,
+		left: left * width,
+		right: width - right * height
+	};
+	return obj;
+}
+
+//Update boundingbox data based on image width/height
+function updateBoundingBox() {
+	IMAGEDATA.faces[0].forEach(face => {
+		face.boundingBox = handlefaceboxData(face.boundingBox);
+	});
+}
+
+//Create facebox template and add styles from boundingbox
+//Create a facebox for each face
+//Display facebox or faceboxes on the page
+function loadFaceBox() {
+	updateBoundingBox();
+	console.log('Load facebox');
+	console.log(IMAGEDATA.faces[0]);
+}
 
 function handleProbability(value, dataArr) {
 	const data = dataArr[0];
@@ -66,10 +105,10 @@ function handleFaceData(faceData) {
 		genderProbability: handleProbability('gender', genderArray),
 		raceProbabilities: [],
 		boundingBox: {
-			bottomRow: boundingBox.bottom_row,
-			leftCol: boundingBox.left_col,
-			rightCol: boundingBox.right_col,
-			topRow: boundingBox.top_row
+			bottom: boundingBox.bottom_row,
+			left: boundingBox.left_col,
+			right: boundingBox.right_col,
+			top: boundingBox.top_row
 		}
 	};
 	//Push each race object to larger face object
@@ -85,8 +124,9 @@ function handleDemoData(data) {
 	const image = data.outputs[0].input.data.image.url;
 	const faceData = data.outputs[0].data.regions;
 	//Pushing facebox data with age, gender, race appearance data to array as objects
-	FACES.push(faceData.map(handleFaceData));
-	displayImage(image);
+	IMAGEDATA.faces.push(faceData.map(handleFaceData));
+	handleImage(image);
+	handleImageLoad();
 }
 
 function getDemoData(link) {
