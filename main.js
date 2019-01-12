@@ -40,8 +40,8 @@ function displayImage(image) {
 	console.log('image displayed');
 	$('#js-image').html(createImgTag(image));
 }
-//Create function to adjust boundingbox data to fit box style
-//Create fucntion to display boxes over image on faces
+//Adjust boundingbox data to fit box style
+//Display boxes over image on faces
 
 function handleProbability(value, dataArr) {
 	const data = dataArr[0];

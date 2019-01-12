@@ -2,7 +2,11 @@
     box-sizing: border-box;
 }
 
+.results-image {
+    max-width: 600px;
+}
+
 .face-img {
-    width: 600px;
-    height: 100%;
+    max-width: 100%;
+    height: auto;
 }
