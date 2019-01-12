@@ -23,6 +23,19 @@ const FACES = [];
 // 		.catch(err => console.log(err));
 // });
 
+//Display image on page
+function displayImage(image) {
+	console.log('image displayed');
+	const alt =
+		FACES[0].length > 1
+			? "A picture with people's faces"
+			: "A picture with a person's face";
+	const imgTag = `<img class="face-img" src=${image} alt="${alt}">`;
+	$('#js-image').html(imgTag);
+}
+//Create function to adjust boundingbox data to fit box style
+//Create fucntion to display boxes over image on faces
+
 function handleProbability(value, dataArr) {
 	const data = dataArr[0];
 	const obj = {
@@ -34,12 +47,12 @@ function handleProbability(value, dataArr) {
 
 //Save demographics data as object for each face
 function handleFaceData(faceData) {
+	console.log('image data saved');
 	//Assign object values to constants from json path
 	const ageArray = faceData.data.face.age_appearance.concepts;
 	const genderArray = faceData.data.face.gender_appearance.concepts;
 	const raceArray = faceData.data.face.multicultural_appearance.concepts;
 	const boundingBox = faceData.region_info.bounding_box;
-	console.log(raceArray);
 	const obj = {
 		id: faceData.id,
 		ageProbability: handleProbability('age', ageArray),
@@ -61,12 +74,12 @@ function handleFaceData(faceData) {
 }
 
 function handleDemoData(data) {
-	// console.log(data);
-	// console.log(data.outputs[0].data.regions);
+	console.log('Valid image');
+	const image = data.outputs[0].input.data.image.url;
 	const faceData = data.outputs[0].data.regions;
 	//Pushing facebox data with age, gender, race appearance data to array as objects
 	FACES.push(faceData.map(handleFaceData));
-	console.log(FACES);
+	displayImage(image);
 }
 
 function getDemoData(link) {
