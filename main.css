@@ -3,10 +3,24 @@
 }
 
 .results-image {
-    max-width: 600px;
+    max-width: 500px;
+    position: relative;
+    margin: 0 auto;
 }
 
 .face-img {
     max-width: 100%;
     height: auto;
+}
+
+.bounding-box {
+    position: absolute;
+    box-shadow: 0 0 0 3px red inset;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    top: 98.16px;
+    bottom: 167.55px;
+    left: 239.44px;
+    right: 335.67px;
 }

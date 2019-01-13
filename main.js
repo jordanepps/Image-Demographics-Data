@@ -36,7 +36,7 @@ function createImgTag(imgSrc) {
 		IMAGEDATA.faces[0].length > 1
 			? "A picture with people's faces"
 			: "A picture with a person's face";
-	return `<img class="js-face-img face-img" src=${imgSrc} alt=${alt}>`;
+	return `<img class="js-face-img face-img" src=${imgSrc} alt="${alt}">`;
 }
 //Display image on page
 function handleImage(image) {
@@ -58,10 +58,10 @@ function handlefaceboxData({ top, bottom, left, right }) {
 	const height = IMAGEDATA.height;
 	const width = IMAGEDATA.width;
 	const obj = {
-		top: top * height,
-		bottom: height - bottom * height,
-		left: left * width,
-		right: width - right * height
+		top: `${Math.round(top * height * 100) / 100}px`,
+		bottom: `${Math.round((height - bottom * height) * 100) / 100}px`,
+		left: `${Math.round(left * width * 100) / 100}px`,
+		right: `${Math.round((width - right * width) * 100) / 100}px`
 	};
 	return obj;
 }
@@ -74,14 +74,31 @@ function updateBoundingBox() {
 }
 
 //Create facebox template and add styles from boundingbox
-//Create a facebox for each face
-//Display facebox or faceboxes on the page
-function loadFaceBox() {
-	updateBoundingBox();
-	console.log('Load facebox');
-	console.log(IMAGEDATA.faces[0]);
+function createBoundingBoxTag(face) {
+	const css = face.boundingBox;
+	const attr = {
+		id: face.id,
+		class: 'bounding-box',
+		css
+	};
+	return $('<div>', attr);
 }
 
+//Display a box for each face
+function displayBoundingBox() {
+	IMAGEDATA.faces[0].forEach(face => {
+		$('#js-image').append(createBoundingBoxTag(face));
+	});
+}
+
+//Display facebox or faceboxes on the page
+function loadFaceBox() {
+	console.log('Load facebox');
+	updateBoundingBox();
+	displayBoundingBox();
+}
+
+//Handle gender and age data
 function handleProbability(value, dataArr) {
 	const data = dataArr[0];
 	const obj = {
@@ -120,9 +137,11 @@ function handleFaceData(faceData) {
 }
 
 function handleDemoData(data) {
-	console.log('Valid image');
 	const image = data.outputs[0].input.data.image.url;
 	const faceData = data.outputs[0].data.regions;
+	//Clear data in IMAGEDATA object
+	IMAGEDATA.faces = [];
+	IMAGEDATA.width = IMAGEDATA.height = 0;
 	//Pushing facebox data with age, gender, race appearance data to array as objects
 	IMAGEDATA.faces.push(faceData.map(handleFaceData));
 	handleImage(image);
