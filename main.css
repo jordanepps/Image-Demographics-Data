@@ -24,3 +24,15 @@
     left: 239.44px;
     right: 335.67px;
 }
+
+#data-table {
+    max-width: 600px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th,
+td {
+    border: 1px solid #dddddd;
+}
