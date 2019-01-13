@@ -13,16 +13,16 @@ const IMAGEDATA = {
 // 		.predict(appModel, img)
 // 		.then(res => console.log(res))
 // 		.catch(err => console.log(err));
-// 	fetch(
-// 		`https://api.unsplash.com/photos/random?query=face&client_id=${unsplashKey}`
-// 	)
-// 		.then(res => res.json())
-// 		.then(json => console.log(json))
-// 		.catch(err => console.log(err));
-// 	fetch('https://api.github.com/users/jordanepps')
-// 		.then(res => res.json())
-// 		.then(json => console.log(json.avatar_url))
-// 		.catch(err => console.log(err));
+// fetch(
+// 	`https://api.unsplash.com/photos/random?query=face&client_id=${unsplashKey}`
+// )
+// 	.then(res => res.json())
+// 	.then(json => console.log(json))
+// 	.catch(err => console.log(err));
+// fetch('https://api.github.com/users/jordanepps')
+// 	.then(res => res.json())
+// 	.then(json => console.log(json.avatar_url))
+// 	.catch(err => console.log(err));
 // });
 
 /*
@@ -195,6 +195,8 @@ function handleDemoData(data) {
 }
 
 function getDemoData(link) {
+	//clear old data from previous search
+	clearData();
 	//Getting data from Clarifai API
 	app.models
 		.predict(appModel, link)
@@ -202,20 +204,56 @@ function getDemoData(link) {
 		.catch(err => console.log(err));
 }
 
+function handleRandomFace(data) {
+	const randomImg = data.urls.regular;
+	getDemoData(randomImg);
+}
+
+//Get random face from unsplash api
+function getRandomFace() {
+	$('#js-search').on('click', '#js-random', () => {
+		fetch(
+			`https://api.unsplash.com/photos/random?query=face&client_id=${unsplashKey}`
+		)
+			.then(res => res.json())
+			.then(handleRandomFace)
+			.catch(err => console.log(err));
+	});
+}
+
+function handleGithubUser(user) {
+	fetch(`https://api.github.com/users/${user}`)
+		.then(res => res.json())
+		.then(json => getDemoData(json.avatar_url))
+		.catch(err => console.log(err));
+}
+
+function getGitHubUser() {
+	$('#js-github-form').submit(e => {
+		e.preventDefault();
+		const input = $('#github-input').val();
+		handleGithubUser(input);
+	});
+}
+
+function clearData() {
+	$('#js-image-data').empty();
+	$('#js-message').empty();
+}
+
 function watchForm() {
 	$('#js-user-input-form').submit(e => {
 		e.preventDefault();
 		// Image link submitted by user
 		const input = $('#image-input').val();
-		//clear old data from previous search
-		$('#js-image-data').empty();
-		$('#js-message').empty();
 		getDemoData(input);
 	});
 }
 
 function loadApp() {
 	watchForm();
+	getRandomFace();
+	getGitHubUser();
 	handleLoadData();
 }
 

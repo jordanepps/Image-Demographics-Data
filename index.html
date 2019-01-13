@@ -15,11 +15,16 @@
 
 <body>
     <main>
-        <div>
+        <div id="js-search">
             <form id="js-user-input-form">
-                <input type="text" name="image-input" id="image-input">
+                <input type="text" name="image-input" id="image-input" placeholder="Enter image link">
                 <input type="submit" value="Submit">
             </form>
+            <form id="js-github-form">
+                <input type="text" name="github-input" id="github-input" placeholder="Enter GitHub User">
+                <input type="submit" value="Submit">
+            </form>
+            <input type="button" id="js-random" value="Search Random Face">
         </div>
         <div id="results">
             <h2 id="js-message"></h2>
