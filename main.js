@@ -8,29 +8,6 @@ const IMAGEDATA = {
 	height: 0
 };
 
-// $(function() {
-// 	app.models
-// 		.predict(appModel, img)
-// 		.then(res => console.log(res))
-// 		.catch(err => console.log(err));
-// fetch(
-// 	`https://api.unsplash.com/photos/random?query=face&client_id=${unsplashKey}`
-// )
-// 	.then(res => res.json())
-// 	.then(json => console.log(json))
-// 	.catch(err => console.log(err));
-// fetch('https://api.github.com/users/jordanepps')
-// 	.then(res => res.json())
-// 	.then(json => console.log(json.avatar_url))
-// 	.catch(err => console.log(err));
-// });
-
-/*
-Call function to set facebox on screen resize
-Add image src to IMAGEDATA and pull from that
-Refactor create elements functions to match createBoundingBoxTag
-*/
-
 //Create Image Tag
 function successMsg() {
 	$('#js-message').html('Click on a face to view data');
