@@ -44,7 +44,7 @@ function handleImage(image) {
 	$('#js-image').html(createImgTag(image));
 }
 //Save width and height of image to IMAGEDATA
-function handleImageLoad() {
+function handleLoadImage() {
 	$('.js-face-img').on('load', () => {
 		console.log('image loaded');
 		IMAGEDATA.width = $('.js-face-img').width();
@@ -55,6 +55,7 @@ function handleImageLoad() {
 
 //Create data to make face box style
 function handlefaceboxData({ top, bottom, left, right }) {
+	console.log('Calculating box style');
 	const height = IMAGEDATA.height;
 	const width = IMAGEDATA.width;
 	const obj = {
@@ -68,6 +69,7 @@ function handlefaceboxData({ top, bottom, left, right }) {
 
 //Update boundingbox data based on image width/height
 function updateBoundingBox() {
+	console.log('Saving new box data');
 	IMAGEDATA.faces[0].forEach(face => {
 		face.boundingBox = handlefaceboxData(face.boundingBox);
 	});
@@ -86,6 +88,7 @@ function createBoundingBoxTag(face) {
 
 //Display a box for each face
 function displayBoundingBox() {
+	console.log('Displaying face box');
 	IMAGEDATA.faces[0].forEach(face => {
 		$('#js-image').append(createBoundingBoxTag(face));
 	});
@@ -93,7 +96,7 @@ function displayBoundingBox() {
 
 //Display facebox or faceboxes on the page
 function loadFaceBox() {
-	console.log('Load facebox');
+	console.log('Loading facebox');
 	updateBoundingBox();
 	displayBoundingBox();
 }
@@ -110,7 +113,7 @@ function handleProbability(value, dataArr) {
 
 //Save demographics data as object for each face
 function handleFaceData(faceData) {
-	console.log('image data saved');
+	console.log('Saving image data');
 	//Assign object values to constants from json path
 	const ageArray = faceData.data.face.age_appearance.concepts;
 	const genderArray = faceData.data.face.gender_appearance.concepts;
@@ -145,7 +148,8 @@ function handleDemoData(data) {
 	//Pushing facebox data with age, gender, race appearance data to array as objects
 	IMAGEDATA.faces.push(faceData.map(handleFaceData));
 	handleImage(image);
-	handleImageLoad();
+	handleLoadImage();
+	// handleLoadData();
 }
 
 function getDemoData(link) {
