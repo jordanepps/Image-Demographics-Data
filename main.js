@@ -26,11 +26,16 @@ const IMAGEDATA = {
 // });
 
 /*
-May have to call the function to set facebox on screen resize
-May want to add image src to IMAGEDATA and pull from that
+Call function to set facebox on screen resize
+Add image src to IMAGEDATA and pull from that
+Refactor create elements functions to match createBoundingBoxTag
 */
 
 //Create Image Tag
+function successMsg() {
+	$('#js-message').html('Click on a face to view data');
+}
+
 function createImgTag(imgSrc) {
 	const alt =
 		IMAGEDATA.faces[0].length > 1
@@ -101,12 +106,48 @@ function loadFaceBox() {
 	displayBoundingBox();
 }
 
+function createDataRowHead(string) {
+	const tableRowHead = $('<tr>');
+	tableRowHead.append(`<th>${string}</th><th>Probability</th>`);
+	return tableRowHead;
+}
+
+function createTableRowData(probability) {
+	const tableRow = $('<tr>');
+	tableRow.html(`<td>${probability.key1}</td><td>${probability.key2}</td>`);
+	return tableRow;
+}
+
+//create table based on face selected
+function createDataTable(face) {
+	const table = $('<table>', { id: 'data-table' });
+	table.append(createDataRowHead('Gender'));
+	table.append(createTableRowData(face.genderProbability));
+	table.append(createDataRowHead('Age'));
+	table.append(createTableRowData(face.ageProbability));
+	table.append(createDataRowHead('Multicultural Appearance'));
+	face.raceProbabilities.forEach(prob => {
+		table.append(createTableRowData(prob));
+	});
+	$('#js-image-data').html(table);
+}
+function handleLoadData() {
+	$('#js-image').on('click', '.bounding-box', e => {
+		//MDN SHOWS FIND METHOD MAY NOT WORK IN IE!!
+		const selectedFaceData = IMAGEDATA.faces[0].find(
+			face => face.id === e.target.id
+		);
+		createDataTable(selectedFaceData);
+	});
+}
+
 //Handle gender and age data
-function handleProbability(value, dataArr) {
+function handleProbability(dataArr) {
 	const data = dataArr[0];
+	const probability = data.value;
 	const obj = {
-		[value]: data.name,
-		probabalility: data.value
+		key1: data.name,
+		key2: probability.toFixed(3)
 	};
 	return obj;
 }
@@ -121,8 +162,8 @@ function handleFaceData(faceData) {
 	const boundingBox = faceData.region_info.bounding_box;
 	const obj = {
 		id: faceData.id,
-		ageProbability: handleProbability('age', ageArray),
-		genderProbability: handleProbability('gender', genderArray),
+		ageProbability: handleProbability(ageArray),
+		genderProbability: handleProbability(genderArray),
 		raceProbabilities: [],
 		boundingBox: {
 			bottom: boundingBox.bottom_row,
@@ -133,13 +174,15 @@ function handleFaceData(faceData) {
 	};
 	//Push each race object to larger face object
 	raceArray.forEach(race => {
-		const raceObj = { race: race.name, value: race.value };
+		const value = race.value;
+		const raceObj = { key1: race.name, key2: value.toFixed(3) };
 		obj.raceProbabilities.push(raceObj);
 	});
 	return obj;
 }
 
 function handleDemoData(data) {
+	successMsg();
 	const image = data.outputs[0].input.data.image.url;
 	const faceData = data.outputs[0].data.regions;
 	//Clear data in IMAGEDATA object
@@ -149,7 +192,6 @@ function handleDemoData(data) {
 	IMAGEDATA.faces.push(faceData.map(handleFaceData));
 	handleImage(image);
 	handleLoadImage();
-	// handleLoadData();
 }
 
 function getDemoData(link) {
@@ -165,12 +207,16 @@ function watchForm() {
 		e.preventDefault();
 		// Image link submitted by user
 		const input = $('#image-input').val();
+		//clear old data from previous search
+		$('#js-image-data').empty();
+		$('#js-message').empty();
 		getDemoData(input);
 	});
 }
 
 function loadApp() {
 	watchForm();
+	handleLoadData();
 }
 
 $(loadApp);
