@@ -5,7 +5,8 @@ const unsplashKey =
 const IMAGEDATA = {
 	faces: [],
 	width: 0,
-	height: 0
+	height: 0,
+	imageUrl: ''
 };
 
 //Create Image Tag
@@ -13,11 +14,16 @@ function successMsg() {
 	$('#js-message').html('Click on a face to view data');
 }
 
+function errorMessage() {
+	$('#js-message').html('Please enter a valid image with a face/faces');
+}
+
 function createImgTag(imgSrc) {
-	const alt =
-		IMAGEDATA.faces[0].length > 1
+	const alt = IMAGEDATA.faces[0]
+		? IMAGEDATA.faces[0].length > 1
 			? "A picture with people's faces"
-			: "A picture with a person's face";
+			: "A picture with a person's face"
+		: 'An image you submitted';
 	return `<img class="js-face-img face-img" src=${imgSrc} alt="${alt}">`;
 }
 //Display image on page
@@ -108,6 +114,8 @@ function createDataTable(face) {
 	});
 	$('#js-image-data').html(table);
 }
+
+//Determine what data to show based on what face was clicked on
 function handleLoadData() {
 	$('#js-image').on('click', '.bounding-box', e => {
 		//MDN SHOWS FIND METHOD MAY NOT WORK IN IE!!
@@ -158,10 +166,9 @@ function handleFaceData(faceData) {
 	return obj;
 }
 
-function handleDemoData(data) {
+function handleValidImage(data, image) {
 	successMsg();
-	const image = data.outputs[0].input.data.image.url;
-	const faceData = data.outputs[0].data.regions;
+	const faceData = data.regions;
 	//Clear data in IMAGEDATA object
 	IMAGEDATA.faces = [];
 	IMAGEDATA.width = IMAGEDATA.height = 0;
@@ -169,6 +176,19 @@ function handleDemoData(data) {
 	IMAGEDATA.faces.push(faceData.map(handleFaceData));
 	handleImage(image);
 	handleLoadImage();
+}
+
+function handleInvalidImage(image) {
+	handleImage(image);
+	errorMessage();
+}
+
+function handleDemoData(data) {
+	const demoData = data.outputs[0].data;
+	const image = data.outputs[0].input.data.image.url;
+	demoData.regions
+		? handleValidImage(demoData, image)
+		: handleInvalidImage(image);
 }
 
 function getDemoData(link) {
@@ -214,6 +234,7 @@ function getGitHubUser() {
 }
 
 function clearData() {
+	$('#js-image').empty();
 	$('#js-image-data').empty();
 	$('#js-message').empty();
 }
