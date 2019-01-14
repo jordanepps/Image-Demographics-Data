@@ -5,12 +5,10 @@ const unsplashKey =
 const IMAGEDATA = {
 	faces: [],
 	width: 0,
-	height: 0,
-	imageUrl: ''
+	height: 0
 };
 
-//Create Image Tag
-function successMsg() {
+function successMessage() {
 	$('#js-message').html('Click on a face to view data');
 }
 
@@ -18,6 +16,11 @@ function errorMessage() {
 	$('#js-message').html('Please enter a valid image with a face/faces');
 }
 
+function gitHubErrorMessage() {
+	$('#js-message').html('No GitHub user found. Please try again.');
+}
+
+//Create Image Tag
 function createImgTag(imgSrc) {
 	const alt = IMAGEDATA.faces[0]
 		? IMAGEDATA.faces[0].length > 1
@@ -167,7 +170,7 @@ function handleFaceData(faceData) {
 }
 
 function handleValidImage(data, image) {
-	successMsg();
+	successMessage();
 	const faceData = data.regions;
 	//Clear data in IMAGEDATA object
 	IMAGEDATA.faces = [];
@@ -198,7 +201,7 @@ function getDemoData(link) {
 	app.models
 		.predict(appModel, link)
 		.then(handleDemoData)
-		.catch(err => console.log(err));
+		.catch(errorMessage);
 }
 
 function handleRandomFace(data) {
@@ -218,18 +221,29 @@ function getRandomFace() {
 	});
 }
 
-function handleGithubUser(user) {
-	fetch(`https://api.github.com/users/${user}`)
-		.then(res => res.json())
-		.then(json => getDemoData(json.avatar_url))
-		.catch(err => console.log(err));
+function handleGitHubUser(user) {
+	user.message ? gitHubErrorMessage() : getDemoData(user.avatar_url);
+}
+
+//Prevent user from typing spaces in input
+function preventSpaceGitHub() {
+	$('#github-input').keypress(e => {
+		const key = e ? event.which : window.event.keyCode;
+		if (key == 32) return false;
+	});
 }
 
 function getGitHubUser() {
+	preventSpaceGitHub();
 	$('#js-github-form').submit(e => {
 		e.preventDefault();
-		const input = $('#github-input').val();
-		handleGithubUser(input);
+		const input = $('#github-input')
+			.val()
+			.replace(/\s+/g, '');
+		fetch(`https://api.github.com/users/${input}`)
+			.then(res => res.json())
+			.then(handleGitHubUser)
+			.catch(err => console.log(err));
 	});
 }
 
