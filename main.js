@@ -237,6 +237,7 @@ function getGitHubUser() {
 	preventSpaceGitHub();
 	$('#js-github-form').submit(e => {
 		e.preventDefault();
+		clearData();
 		const input = $('#github-input')
 			.val()
 			.replace(/\s+/g, '');
