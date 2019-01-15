@@ -226,15 +226,14 @@ function handleGitHubUser(user) {
 }
 
 //Prevent user from typing spaces in input
-function preventSpaceGitHub() {
-	$('#github-input').keypress(e => {
+function preventSpaces() {
+	$('input').keypress(e => {
 		const key = e ? event.which : window.event.keyCode;
 		if (key == 32) return false;
 	});
 }
 
 function getGitHubUser() {
-	preventSpaceGitHub();
 	$('#js-github-form').submit(e => {
 		e.preventDefault();
 		clearData();
@@ -255,6 +254,7 @@ function clearData() {
 }
 
 function watchForm() {
+	preventSpaces();
 	$('#js-user-input-form').submit(e => {
 		e.preventDefault();
 		// Image link submitted by user
