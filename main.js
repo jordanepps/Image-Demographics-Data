@@ -259,8 +259,20 @@ function clearData() {
 	$('#js-message').empty();
 }
 
+//Change input placeholder based on selected radio
+function radioListener() {
+	$("input[name='user-choice']").change(e => {
+		const placeholder = e.target.value === 'image' ? 'Enter image link' : 'Enter GitHub username';
+		$('#input').attr({
+			placeholder
+		});
+
+	})
+}
+
 function watchForm() {
 	preventSpaces();
+	radioListener();
 	$('#js-user-input-form').submit(e => {
 		e.preventDefault();
 		const radio = $("input[name='user-choice']:checked").val();
