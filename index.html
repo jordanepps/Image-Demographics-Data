@@ -1,39 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Page Title</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+		<script
+			src="https://code.jquery.com/jquery-3.3.1.min.js"
+			integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			crossorigin="anonymous"
+		></script>
+		<script
+			type="text/javascript"
+			src="https://sdk.clarifai.com/js/clarifai-latest.js"
+		></script>
+		<script src="main.js"></script>
+	</head>
 
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Page Title</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://sdk.clarifai.com/js/clarifai-latest.js"></script>
-    <script src="main.js"></script>
-</head>
-
-<body>
-    <main>
-        <div id="js-search">
-            <form id="js-user-input-form">
-                <input type="text" name="input" id="input" placeholder="Enter image link">
-                <input type="radio" name="user-choice" id="image-link" value="image" checked>
-                <label for="image-link">Image Link</label>
-                <input type="radio" name="user-choice" id="github-user" value="github">
-                <label for="github-user">GitHub Username</label>
-                <input type="submit" value="Submit">
-            </form>
-            <input type="button" id="js-random" value="Search Random Face">
-        </div>
-        <div id="results">
-            <h2 id="js-message"></h2>
-            <div id="js-image" class="results-image"></div>
-            <div id="js-image-data">
-            </div>
-        </div>
-    </main>
-
-</body>
-
+	<body>
+		<main>
+			<h1 id="title">Get demographic from an image</h1>
+			<div id="js-search">
+				<form id="js-user-input-form">
+					<input
+						type="text"
+						name="input"
+						id="input"
+						placeholder="Enter image link"
+					/>
+					<input
+						type="radio"
+						name="user-choice"
+						id="image-link"
+						value="image"
+						checked
+					/>
+					<label for="image-link">Image Link</label>
+					<input
+						type="radio"
+						name="user-choice"
+						id="github-user"
+						value="github"
+					/>
+					<label for="github-user">GitHub Username</label>
+					<input type="submit" value="Submit" />
+				</form>
+				<input type="button" id="js-random" value="Search Random Face" />
+			</div>
+			<div id="results">
+				<h2 id="js-message"></h2>
+				<div id="js-image" class="results-image"></div>
+				<div id="js-image-data"></div>
+			</div>
+		</main>
+	</body>
 </html>

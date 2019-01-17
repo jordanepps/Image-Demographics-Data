@@ -24,11 +24,11 @@ function gitHubErrorMessage() {
 
 //Create Image Tag
 function createImgTag(imgSrc) {
-	const alt = IMAGEDATA.faces[0] ?
-		IMAGEDATA.faces[0].length > 1 ?
-		"A picture with people's faces" :
-		"A picture with a person's face" :
-		'An image you submitted';
+	const alt = IMAGEDATA.faces[0]
+		? IMAGEDATA.faces[0].length > 1
+			? "A picture with people's faces"
+			: "A picture with a person's face"
+		: 'An image you submitted';
 	return `<img class="js-face-img face-img" src=${imgSrc} alt="${alt}">`;
 }
 //Display image on page
@@ -47,12 +47,7 @@ function handleLoadImage() {
 }
 
 //Create data to make face box style
-function handlefaceboxData({
-	top,
-	bottom,
-	left,
-	right
-}) {
+function handlefaceboxData({ top, bottom, left, right }) {
 	console.log('Calculating box style');
 	const height = IMAGEDATA.height;
 	const width = IMAGEDATA.width;
@@ -201,9 +196,10 @@ function handleInvalidImage(image) {
 function handleDemoData(data) {
 	const demoData = data.outputs[0].data;
 	const image = data.outputs[0].input.data.image.url;
-	demoData.regions ?
-		handleValidImage(demoData, image) :
-		handleInvalidImage(image);
+	$('#results').css('display', 'grid');
+	demoData.regions
+		? handleValidImage(demoData, image)
+		: handleInvalidImage(image);
 }
 
 function getDemoData(link) {
@@ -225,8 +221,8 @@ function handleRandomFace(data) {
 function getRandomFace() {
 	$('#js-search').on('click', '#js-random', () => {
 		fetch(
-				`https://api.unsplash.com/photos/random?query=face&client_id=${unsplashKey}`
-			)
+			`https://api.unsplash.com/photos/random?query=face&client_id=${unsplashKey}`
+		)
 			.then(res => res.json())
 			.then(handleRandomFace)
 			.catch(err => console.log(err));
@@ -262,12 +258,12 @@ function clearData() {
 //Change input placeholder based on selected radio
 function radioListener() {
 	$("input[name='user-choice']").change(e => {
-		const placeholder = e.target.value === 'image' ? 'Enter image link' : 'Enter GitHub username';
+		const placeholder =
+			e.target.value === 'image' ? 'Enter image link' : 'Enter GitHub username';
 		$('#input').attr({
 			placeholder
 		});
-
-	})
+	});
 }
 
 function watchForm() {
@@ -277,7 +273,9 @@ function watchForm() {
 		e.preventDefault();
 		const radio = $("input[name='user-choice']:checked").val();
 		// Image link or username submitted by user
-		const input = $('#input').val().replace(/\s+/g, '');
+		const input = $('#input')
+			.val()
+			.replace(/\s+/g, '');
 		radio === 'image' ? getDemoData(input) : getGitHubUser(input);
 	});
 }
