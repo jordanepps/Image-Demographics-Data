@@ -139,7 +139,7 @@ function handleProbability(dataArr) {
 	const probability = data.value;
 	const obj = {
 		key1: data.name,
-		key2: probability.toFixed(3)
+		key2: `${(probability.toFixed(3) * 100).toFixed(1)}%`
 	};
 	return obj;
 }
@@ -169,7 +169,7 @@ function handleFaceData(faceData) {
 		const value = race.value;
 		const raceObj = {
 			key1: race.name,
-			key2: value.toFixed(4)
+			key2: `${(value.toFixed(4) * 100).toFixed(2)}%`
 		};
 		obj.raceProbabilities.push(raceObj);
 	});
