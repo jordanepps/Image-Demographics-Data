@@ -259,16 +259,9 @@ function watchForm() {
 	preventSpaces();
 	$('#js-search').on('submit', '#js-search-form', e => {
 		e.preventDefault();
-		const radio = $("input[name='user-choice']:checked").val();
-		// Image link or username submitted by user
-		const input = $('#input')
+		const radio = $("input[name='user-choice']:checked")
 			.val()
-			.replace(/\s+/g, '');
-		radio === 'image' ? getDemoData(input) : getGitHubUser(input);
-	});
-	$('#js-search-form').submit(e => {
-		e.preventDefault();
-		const radio = $("input[name='user-choice']:checked").val();
+			.toLowerCase();
 		// Image link or username submitted by user
 		const input = $('#input')
 			.val()
