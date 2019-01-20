@@ -235,7 +235,7 @@ function handleGitHubUser(user) {
 
 //Prevent user from typing spaces in input
 function preventSpaces() {
-	$('input').keypress(e => {
+	$('#js-search').on('keypress', '#input', e => {
 		const key = e ? event.which : window.event.keyCode;
 		if (key == 32) return false;
 	});
@@ -255,21 +255,18 @@ function clearData() {
 	$('#js-message').empty();
 }
 
-//Change input placeholder based on selected radio
-function radioListener() {
-	$("input[name='user-choice']").change(e => {
-		const placeholder =
-			e.target.value === 'image' ? 'Enter image link' : 'Enter GitHub username';
-		$('#input').attr({
-			placeholder
-		});
-	});
-}
-
 function watchForm() {
 	preventSpaces();
-	radioListener();
-	$('#js-user-input-form').submit(e => {
+	$('#js-search').on('submit', '#js-search-form', e => {
+		e.preventDefault();
+		const radio = $("input[name='user-choice']:checked").val();
+		// Image link or username submitted by user
+		const input = $('#input')
+			.val()
+			.replace(/\s+/g, '');
+		radio === 'image' ? getDemoData(input) : getGitHubUser(input);
+	});
+	$('#js-search-form').submit(e => {
 		e.preventDefault();
 		const radio = $("input[name='user-choice']:checked").val();
 		// Image link or username submitted by user
@@ -280,7 +277,115 @@ function watchForm() {
 	});
 }
 
+function loadForm() {
+	setTimeout(() => {
+		$('#js-search').append(createSearchForm);
+		$('#js-search-form').append(createRadios);
+		$('#js-search-form').append(
+			$('<div>').attr({ id: 'js-input-container', class: 'input-container' })
+		);
+		handleRadioCheck();
+	}, 1000);
+}
+
+function createSearchForm() {
+	const attr = {
+		id: 'js-search-form',
+		class: 'search-form fadein'
+	};
+	return $('<form>', attr);
+}
+
+function createRadioInput(string) {
+	const attr = {
+		id: string,
+		class: 'radio transition',
+		type: 'radio',
+		name: 'user-choice',
+		value: string
+	};
+	return $('<input>', attr);
+}
+
+function createRadioLabel(string) {
+	const attr = {
+		class: 'transition radio-label',
+		for: string,
+		tabindex: 1
+	};
+	return $(`<label>${string}</label>`).attr(attr);
+}
+
+function createRadios() {
+	const fieldset = $('<fieldset>').attr('class', 'radio-container');
+	fieldset.append(
+		'<legend class="src-legend">What source are you using?</legend>'
+	);
+	fieldset.append(createRadioInput('Image'));
+	fieldset.append(createRadioLabel('Image'));
+	fieldset.append(createRadioInput('GitHub'));
+	fieldset.append(createRadioLabel('GitHub'));
+	return fieldset;
+}
+
+function startClickAnimation() {
+	$('#js-title-section .title')
+		.nextAll()
+		.fadeOut(300);
+	$('#js-search').empty();
+}
+
+function handleImageChecked() {
+	$('label[for="Image"]').addClass('checked');
+	$('label[for="GitHub"]').removeClass('checked');
+	$('#js-input-container').empty();
+	$('#js-input-container').append(
+		$('<label>Paste link below</label>').attr({
+			for: 'input',
+			class: 'input-label'
+		})
+	);
+	$('#js-input-container').append(
+		$('<input>').attr({ type: 'text', name: 'input', id: 'input' })
+	);
+	$('#js-input-container').append(
+		$('<button>Search</button>').attr({ class: 'submit-btn', type: 'submit' })
+	);
+}
+
+function handleGitHubChecked() {
+	$('label[for="GitHub"]').addClass('checked');
+	$('label[for="Image"]').removeClass('checked');
+	$('#js-input-container').empty();
+	$('#js-input-container').append(
+		$('<label>Enter GitHub username</label>').attr({
+			for: 'input',
+			class: 'input-label'
+		})
+	);
+	$('#js-input-container').append(
+		$('<input>').attr({ type: 'text', name: 'input', id: 'input' })
+	);
+	$('#js-input-container').append(
+		$('<button>Search</button>').attr({ class: 'submit-btn', type: 'submit' })
+	);
+}
+
+function handleRadioCheck() {
+	$('#js-search').on('change', 'input[name=user-choice]:radio', () => {
+		$('#GitHub').is(':checked') ? handleGitHubChecked() : handleImageChecked();
+	});
+}
+
+function handleStartClick() {
+	$('#js-start-btn').click(() => {
+		startClickAnimation();
+		loadForm();
+	});
+}
+
 function loadApp() {
+	handleStartClick();
 	watchForm();
 	getRandomFace();
 	handleLoadData();
