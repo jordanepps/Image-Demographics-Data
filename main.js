@@ -10,16 +10,47 @@ const IMAGEDATA = {
 	height: 0
 };
 
+function handleTryAgain() {
+	$('#js-results').on('click', '#js-try-again', () => {
+		clearData();
+		loadForm();
+	});
+}
+
+function loadTryAgainBtn() {
+	const div = $('<div>').attr('class', 'try-again-container');
+	$(div).append(createTryAgainBtn);
+	$('#js-results').append(div);
+	$('#js-search').fadeIn(500);
+}
+
+function createTryAgainBtn() {
+	const btn = $('<button>Search Again</button>').attr({
+		id: 'js-try-again',
+		class: 'try-again',
+		type: 'button'
+	});
+	return btn;
+}
+
 function successMessage() {
 	$('#js-message').html('Click on a face to view data');
 }
 
 function errorMessage() {
+	console.log('error');
 	$('#js-message').html('Please enter a valid image with a face/faces');
 }
 
 function gitHubErrorMessage() {
-	$('#js-message').html('No GitHub user found. Please try again.');
+	setTimeout(() => {
+		$('#js-results').html(
+			'<h3 class="no-github-msg">No GitHub user found. Please try again.</h3>'
+		);
+		loadTryAgainBtn();
+	}, 500);
+
+	$('#js-results').fadeIn(1000);
 }
 
 //Create Image Tag
@@ -196,7 +227,7 @@ function handleInvalidImage(image) {
 function handleDemoData(data) {
 	const demoData = data.outputs[0].data;
 	const image = data.outputs[0].input.data.image.url;
-	$('#results').css('display', 'grid');
+	$('#js-results').css('display', 'grid');
 	demoData.regions
 		? handleValidImage(demoData, image)
 		: handleInvalidImage(image);
@@ -250,9 +281,13 @@ function getGitHubUser(input) {
 }
 
 function clearData() {
-	$('#js-image').empty();
-	$('#js-image-data').empty();
-	$('#js-message').empty();
+	setTimeout(() => {
+		$('#js-image').empty();
+		$('#js-image-data').empty();
+		$('#js-message').empty();
+		$('#js-search').empty();
+		$('#js-results').empty();
+	}, 300);
 }
 
 function watchForm() {
@@ -266,6 +301,7 @@ function watchForm() {
 		const input = $('#input')
 			.val()
 			.replace(/\s+/g, '');
+		$('#js-search').fadeOut(300);
 		radio === 'image' ? getDemoData(input) : getGitHubUser(input);
 	});
 }
@@ -275,7 +311,10 @@ function loadForm() {
 		$('#js-search').append(createSearchForm);
 		$('#js-search-form').append(createRadios);
 		$('#js-search-form').append(
-			$('<div>').attr({ id: 'js-input-container', class: 'input-container' })
+			$('<div>').attr({
+				id: 'js-input-container',
+				class: 'input-container'
+			})
 		);
 		handleRadioCheck();
 	}, 1000);
@@ -321,7 +360,8 @@ function createRadios() {
 	return fieldset;
 }
 
-function startClickAnimation() {
+//Clear app description text ferom page
+function clearAppDescriptionAnimation() {
 	$('#js-title-section .title')
 		.nextAll()
 		.fadeOut(300);
@@ -331,7 +371,9 @@ function startClickAnimation() {
 function handleImageChecked() {
 	$('label[for="Image"]').addClass('checked');
 	$('label[for="GitHub"]').removeClass('checked');
-	$('#js-input-container').empty();
+	$('#js-input-container')
+		.empty()
+		.hide();
 	$('#js-input-container').append(
 		$('<label>Paste link below</label>').attr({
 			for: 'input',
@@ -344,12 +386,15 @@ function handleImageChecked() {
 	$('#js-input-container').append(
 		$('<button>Search</button>').attr({ class: 'submit-btn', type: 'submit' })
 	);
+	$('#js-input-container').fadeIn(300);
 }
 
 function handleGitHubChecked() {
 	$('label[for="GitHub"]').addClass('checked');
 	$('label[for="Image"]').removeClass('checked');
-	$('#js-input-container').empty();
+	$('#js-input-container')
+		.empty()
+		.hide();
 	$('#js-input-container').append(
 		$('<label>Enter GitHub username</label>').attr({
 			for: 'input',
@@ -362,23 +407,27 @@ function handleGitHubChecked() {
 	$('#js-input-container').append(
 		$('<button>Search</button>').attr({ class: 'submit-btn', type: 'submit' })
 	);
+	$('#js-input-container').fadeIn(300);
 }
 
+//Display certain input container based on which input was clicked
 function handleRadioCheck() {
 	$('#js-search').on('change', 'input[name=user-choice]:radio', () => {
 		$('#GitHub').is(':checked') ? handleGitHubChecked() : handleImageChecked();
 	});
 }
 
+//Begin to load form after button press
 function handleStartClick() {
 	$('#js-start-btn').click(() => {
-		startClickAnimation();
+		clearAppDescriptionAnimation();
 		loadForm();
 	});
 }
 
 function loadApp() {
 	handleStartClick();
+	handleTryAgain();
 	watchForm();
 	getRandomFace();
 	handleLoadData();

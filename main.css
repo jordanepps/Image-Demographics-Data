@@ -246,12 +246,16 @@ main {
 }
 
 .radio:focus+.radio-label,
-.radio-label:hover,
-.checked {
+.radio-label:hover {
     background: #34113F;
     color: white;
     box-shadow: 0 20px 5px -10px rgba(0, 0, 0, 0.4);
     transform: translateY(10px);
+}
+
+.checked {
+    background: #34113F;
+    color: white;
 }
 
 .input-container {
@@ -264,7 +268,7 @@ main {
     width: 100%;
     max-width: 700px;
     min-width: 200px;
-    margin: auto;
+    margin: 15px auto;
     background: #fff;
     color: #34113F;
     font: inherit;
@@ -276,7 +280,6 @@ main {
 }
 
 .submit-btn {
-    background: transparent;
     font: inherit;
     border: 0;
     outline: 0;
@@ -288,8 +291,17 @@ main {
     padding: 12px 36px;
     margin-left: -96px;
     float: right;
-    bottom: 10px;
+    bottom: 25px;
     position: absolute;
+}
+
+.submit-btn:hover {
+    background: rgb(69, 22, 83);
+}
+
+.submit-btn:active {
+    background: rgb(79, 26, 95);
+    box-shadow: inset 0 0 10px 2px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -365,10 +377,39 @@ input[type="radio"]:checked+.radio-label:nth-child(2) {
 
   */
 
+.try-again-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
 
-#results {
+.try-again {
+    text-align: center;
+    font: inherit;
+    border: 0;
+    outline: 0;
+    transition: all 200ms ease-in;
+    cursor: pointer;
+    background: #34113F;
+    color: #fff;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+    padding: 12px 26px;
+    width: 150px;
+    margin: 0 auto;
+}
+
+.try-again:hover {
+    background: rgb(69, 22, 83);
+}
+
+.try-again:active {
+    background: rgb(79, 26, 95);
+    box-shadow: inset 0 0 10px 2px rgba(0, 0, 0, 0.2);
+}
+
+
+.results-container {
     max-width: 1000px;
-    background-color: gainsboro;
     margin: 10px auto;
     padding: 10px;
     display: grid;
@@ -377,7 +418,7 @@ input[type="radio"]:checked+.radio-label:nth-child(2) {
     display: none;
 }
 
-#js-message {
+.no-github-msg {
     text-align: center;
     grid-column-start: 1;
     grid-column-end: 3;
