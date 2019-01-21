@@ -418,7 +418,7 @@ input[type="radio"]:checked+.radio-label:nth-child(2) {
     display: none;
 }
 
-.no-github-msg {
+.error-msg {
     text-align: center;
     grid-column-start: 1;
     grid-column-end: 3;

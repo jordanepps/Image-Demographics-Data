@@ -38,14 +38,20 @@ function successMessage() {
 }
 
 function errorMessage() {
-	console.log('error');
-	$('#js-message').html('Please enter a valid image with a face/faces');
+	setTimeout(() => {
+		$('#js-results').html(
+			'<h3 class="error-msg">Please enter an image with at least one face</h3>'
+		);
+		loadTryAgainBtn();
+	}, 500);
+
+	$('#js-results').fadeIn(1000);
 }
 
 function gitHubErrorMessage() {
 	setTimeout(() => {
 		$('#js-results').html(
-			'<h3 class="no-github-msg">No GitHub user found. Please try again.</h3>'
+			'<h3 class="error-msg">No GitHub user found. Please try again.</h3>'
 		);
 		loadTryAgainBtn();
 	}, 500);
