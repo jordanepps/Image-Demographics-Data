@@ -2,8 +2,6 @@ const app = new Clarifai.App({
 	apiKey: 'cfd1f224ea07473a8ba98dfffe07943c'
 });
 const appModel = 'c0c0ac362b03416da06ab3fa36fb58e3';
-const unsplashKey =
-	'ed6aecb09984de2f5a1170ed2c7c8247773472f3a719fd01ef4d220165c21ba0';
 const IMAGEDATA = {
 	faces: [],
 	width: 0,
