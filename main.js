@@ -7,7 +7,8 @@ const unsplashKey =
 const IMAGEDATA = {
 	faces: [],
 	width: 0,
-	height: 0
+	height: 0,
+	src: ''
 };
 
 function handleTryAgain() {
@@ -21,7 +22,6 @@ function loadTryAgainBtn() {
 	const div = $('<div>').attr('class', 'try-again-container');
 	$(div).append(createTryAgainBtn);
 	$('#js-results').append(div);
-	$('#js-search').fadeIn(500);
 }
 
 function createTryAgainBtn() {
@@ -34,14 +34,22 @@ function createTryAgainBtn() {
 }
 
 function successMessage() {
-	$('#js-message').html('Click on a face to view data');
+	const h2 = $(
+		'<h2 class="success-msg">Click on a face to view demographic information</h2>'
+	);
+	console.log($(h2));
+	$('#js-results').append($(h2));
+	$('#js-results').fadeIn(500);
 }
 
 function errorMessage() {
+	const msg =
+		IMAGEDATA.src === 'github'
+			? 'This user does not have a face in their profile picture'
+			: 'Please enter an image with at least one face';
 	setTimeout(() => {
-		$('#js-results').html(
-			'<h3 class="error-msg">Please enter an image with at least one face</h3>'
-		);
+		console.log(msg);
+		$('#js-results').html(`<h3 class="error-msg">${msg}</h3>`);
 		loadTryAgainBtn();
 	}, 500);
 
@@ -59,6 +67,18 @@ function gitHubErrorMessage() {
 	$('#js-results').fadeIn(1000);
 }
 
+function handleFacesMessage() {
+	const h2 = $('<h3>').attr({
+		class: 'face-msg box-unclicked-msg',
+		id: 'js-face-msg'
+	});
+	const faceCount = IMAGEDATA.faces[0].length;
+	const msg =
+		faceCount === 1 ? '1 Face Deteced' : `${faceCount} Faces Detected`;
+	$(h2).html(msg);
+	return h2;
+}
+
 //Create Image Tag
 function createImgTag(imgSrc) {
 	const alt = IMAGEDATA.faces[0]
@@ -66,26 +86,36 @@ function createImgTag(imgSrc) {
 			? "A picture with people's faces"
 			: "A picture with a person's face"
 		: 'An image you submitted';
-	return `<img class="js-face-img face-img" src=${imgSrc} alt="${alt}">`;
+	return `<img id="js-face-img" class="face-img" src=${imgSrc} alt="${alt}">`;
 }
+
 //Display image on page
 function handleImage(image) {
-	console.log('image displayed');
-	$('#js-image').html(createImgTag(image));
+	const dataContainer = $('<div>').attr({
+		class: 'data-container',
+		id: 'js-data-container'
+	});
+	$('#js-results').append($(dataContainer));
+	const div = $('<div>').attr({
+		class: 'image-container box-unclicked-img ',
+		id: 'js-image-container'
+	});
+	$('#js-data-container').append(handleFacesMessage());
+	div.append(createImgTag(image));
+	$('#js-data-container').append($(div));
 }
+
 //Save width and height of image to IMAGEDATA
 function handleLoadImage() {
-	$('.js-face-img').on('load', () => {
-		console.log('image loaded');
-		IMAGEDATA.width = $('.js-face-img').width();
-		IMAGEDATA.height = $('.js-face-img').height();
+	$('#js-face-img').on('load', () => {
+		IMAGEDATA.width = $('#js-face-img').width();
+		IMAGEDATA.height = $('#js-face-img').height();
 		loadFaceBox();
 	});
 }
 
 //Create data to make face box style
 function handlefaceboxData({ top, bottom, left, right }) {
-	console.log('Calculating box style');
 	const height = IMAGEDATA.height;
 	const width = IMAGEDATA.width;
 	const obj = {
@@ -99,18 +129,18 @@ function handlefaceboxData({ top, bottom, left, right }) {
 
 //Update boundingbox data based on image width/height
 function updateBoundingBox() {
-	console.log('Saving new box data');
 	IMAGEDATA.faces[0].forEach(face => {
 		face.boundingBox = handlefaceboxData(face.boundingBox);
 	});
 }
 
 //Create facebox template and add styles from boundingbox
-function createBoundingBoxTag(face) {
+function createBoundingBoxTag(face, tabIndex) {
 	const css = face.boundingBox;
 	const attr = {
 		id: face.id,
 		class: 'bounding-box',
+		tabIndex,
 		css
 	};
 	return $('<div>', attr);
@@ -118,15 +148,15 @@ function createBoundingBoxTag(face) {
 
 //Display a box for each face
 function displayBoundingBox() {
-	console.log('Displaying face box');
+	let tabIndex = 1;
 	IMAGEDATA.faces[0].forEach(face => {
-		$('#js-image').append(createBoundingBoxTag(face));
+		tabIndex++;
+		$('#js-image-container').append(createBoundingBoxTag(face, tabIndex));
 	});
 }
 
 //Display facebox or faceboxes on the page
 function loadFaceBox() {
-	console.log('Loading facebox');
 	updateBoundingBox();
 	displayBoundingBox();
 }
@@ -146,7 +176,7 @@ function createTableRowData(probability) {
 //create table based on face selected
 function createDataTable(face) {
 	const table = $('<table>', {
-		id: 'data-table'
+		class: 'data-table'
 	});
 	table.append(createDataRowHead('Gender'));
 	table.append(createTableRowData(face.genderProbability));
@@ -156,17 +186,29 @@ function createDataTable(face) {
 	face.raceProbabilities.forEach(prob => {
 		table.append(createTableRowData(prob));
 	});
-	$('#js-image-data').html(table);
+
+	$('#js-table-container').html(table);
+}
+
+function loadDataCallback(e) {
+	$('#js-image-container').removeClass('box-unclicked-img');
+	$('#js-face-msg').removeClass('box-unclicked-msg');
+	$('#js-data-container').append(
+		$('<div>').attr({ class: 'table-container', id: 'js-table-container' })
+	);
+	const selectedFaceData = IMAGEDATA.faces[0].find(
+		face => face.id === e.target.id
+	);
+	createDataTable(selectedFaceData);
+	loadFaceBox();
 }
 
 //Determine what data to show based on what face was clicked on
 function handleLoadData() {
-	$('#js-image').on('click', '.bounding-box', e => {
-		//MDN SHOWS FIND METHOD MAY NOT WORK IN IE!!
-		const selectedFaceData = IMAGEDATA.faces[0].find(
-			face => face.id === e.target.id
-		);
-		createDataTable(selectedFaceData);
+	$('#js-results').on('click', '.bounding-box', loadDataCallback);
+
+	$('#js-results').on('keypress', '.bounding-box', function(e) {
+		if (e.which === 13) loadDataCallback(e);
 	});
 }
 
@@ -214,6 +256,7 @@ function handleFaceData(faceData) {
 }
 
 function handleValidImage(data, image) {
+	loadTryAgainBtn();
 	successMessage();
 	const faceData = data.regions;
 	//Clear data in IMAGEDATA object
@@ -225,45 +268,24 @@ function handleValidImage(data, image) {
 	handleLoadImage();
 }
 
-function handleInvalidImage(image) {
-	handleImage(image);
+function handleInvalidImage() {
 	errorMessage();
 }
 
 function handleDemoData(data) {
 	const demoData = data.outputs[0].data;
 	const image = data.outputs[0].input.data.image.url;
-	$('#js-results').css('display', 'grid');
-	demoData.regions
-		? handleValidImage(demoData, image)
-		: handleInvalidImage(image);
+	demoData.regions ? handleValidImage(demoData, image) : handleInvalidImage();
 }
 
 function getDemoData(link) {
 	//clear old data from previous search
-	clearData();
+	clearData(50);
 	//Getting data from Clarifai API
 	app.models
 		.predict(appModel, link)
 		.then(handleDemoData)
 		.catch(errorMessage);
-}
-
-function handleRandomFace(data) {
-	const randomImg = data.urls.regular;
-	getDemoData(randomImg);
-}
-
-//Get random face from unsplash api
-function getRandomFace() {
-	$('#js-search').on('click', '#js-random', () => {
-		fetch(
-			`https://api.unsplash.com/photos/random?query=face&client_id=${unsplashKey}`
-		)
-			.then(res => res.json())
-			.then(handleRandomFace)
-			.catch(err => console.log(err));
-	});
 }
 
 function handleGitHubUser(user) {
@@ -286,14 +308,14 @@ function getGitHubUser(input) {
 		.catch(err => console.log(err));
 }
 
-function clearData() {
+function clearData(time = 300) {
 	setTimeout(() => {
 		$('#js-image').empty();
 		$('#js-image-data').empty();
 		$('#js-message').empty();
 		$('#js-search').empty();
 		$('#js-results').empty();
-	}, 300);
+	}, time);
 }
 
 function watchForm() {
@@ -303,6 +325,7 @@ function watchForm() {
 		const radio = $("input[name='user-choice']:checked")
 			.val()
 			.toLowerCase();
+		IMAGEDATA.src = radio;
 		// Image link or username submitted by user
 		const input = $('#input')
 			.val()
@@ -322,6 +345,7 @@ function loadForm() {
 				class: 'input-container'
 			})
 		);
+		$('#js-search').show(0);
 		handleRadioCheck();
 	}, 1000);
 }
@@ -368,10 +392,23 @@ function createRadios() {
 
 //Clear app description text ferom page
 function clearAppDescriptionAnimation() {
+	$('#js-title').animate({ margin: '10px 0', fontSize: '35px' }, 1000);
 	$('#js-title-section .title')
 		.nextAll()
 		.fadeOut(300);
 	$('#js-search').empty();
+}
+
+function createSearchInput() {
+	const searchBox = $('<div>').attr('class', 'search-box');
+	$(searchBox).append(
+		$('<input>').attr({ type: 'text', name: 'input', id: 'input' })
+	);
+	$(searchBox).append(
+		$('<button>Search</button>').attr({ class: 'submit-btn', type: 'submit' })
+	);
+	$('#js-input-container').append($(searchBox));
+	$('#js-input-container').fadeIn(300);
 }
 
 function handleImageChecked() {
@@ -386,13 +423,7 @@ function handleImageChecked() {
 			class: 'input-label'
 		})
 	);
-	$('#js-input-container').append(
-		$('<input>').attr({ type: 'text', name: 'input', id: 'input' })
-	);
-	$('#js-input-container').append(
-		$('<button>Search</button>').attr({ class: 'submit-btn', type: 'submit' })
-	);
-	$('#js-input-container').fadeIn(300);
+	createSearchInput();
 }
 
 function handleGitHubChecked() {
@@ -407,13 +438,7 @@ function handleGitHubChecked() {
 			class: 'input-label'
 		})
 	);
-	$('#js-input-container').append(
-		$('<input>').attr({ type: 'text', name: 'input', id: 'input' })
-	);
-	$('#js-input-container').append(
-		$('<button>Search</button>').attr({ class: 'submit-btn', type: 'submit' })
-	);
-	$('#js-input-container').fadeIn(300);
+	createSearchInput();
 }
 
 //Display certain input container based on which input was clicked
@@ -431,12 +456,18 @@ function handleStartClick() {
 	});
 }
 
+function handleScreenResize() {
+	$(window).resize(() => {
+		if (IMAGEDATA.width || IMAGEDATA.height) loadFaceBox();
+	});
+}
+
 function loadApp() {
 	handleStartClick();
 	handleTryAgain();
 	watchForm();
-	getRandomFace();
 	handleLoadData();
+	handleScreenResize();
 }
 
 $(loadApp);
