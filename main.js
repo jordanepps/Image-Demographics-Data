@@ -11,7 +11,7 @@ const IMAGEDATA = {
 
 function handleTryAgain() {
 	$('#js-results').on('click', '#js-try-again', () => {
-		clearData();
+		clearData(0);
 		loadForm();
 	});
 }
