@@ -1,37 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Page Title</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+		<script
+			src="https://code.jquery.com/jquery-3.3.1.min.js"
+			integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			crossorigin="anonymous"
+		></script>
+		<script
+			type="text/javascript"
+			src="https://sdk.clarifai.com/js/clarifai-latest.js"
+		></script>
+		<script src="main.js"></script>
+	</head>
 
-<head>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>Page Title</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-	 crossorigin="anonymous"></script>
-	<script type="text/javascript" src="https://sdk.clarifai.com/js/clarifai-latest.js"></script>
-	<script src="main.js"></script>
-</head>
-
-<body>
-	<main>
-		<section id="js-title-section" class="title-section">
-			<h1 id="js-title" class="title">Demographics Data from Images</h1>
-			<h3 class="sub-title">Enter an image link or search for a GitHub user who may have a profile picture uploaded. The
-				image
-				will be analyzed
-				and information on age, gender, and multicultural race will be displayed. The image provided can even have multiple
-				faces.</h3>
-			<p class="clarafia-msg"><i>Any image used may be sumbitted to Clariai to help train their API</i></p>
-		</section>
-		<section id="js-search" class="search">
-			<div id="js-start-btn-container" class="start-btn-container">
-				<button id="js-start-btn" class="start-btn" type="button" tabindex="0">get started</button>
-			</div>
-		</section>
-		<section id="js-results" class="results-container">
-		</section>
-	</main>
-</body>
-
+	<body>
+		<main>
+			<section id="js-title-section" class="title-section">
+				<h1 id="js-title" class="title">Demographics Data from Images</h1>
+				<h3 class="sub-title">
+					Enter an image link or search for a GitHub user who may have a profile
+					picture uploaded. The image will be analyzed and information on age,
+					gender, and multicultural race will be displayed. The image provided
+					can even have multiple faces.
+				</h3>
+				<p class="clarafia-msg">
+					<i
+						>Any image used may be sumbitted to Clarifai to help train their
+						API</i
+					>
+				</p>
+			</section>
+			<section id="js-search" class="search">
+				<div id="js-start-btn-container" class="start-btn-container">
+					<button
+						id="js-start-btn"
+						class="start-btn"
+						type="button"
+						tabindex="0"
+					>
+						get started
+					</button>
+				</div>
+			</section>
+			<section id="js-results" class="results-container"></section>
+		</main>
+	</body>
 </html>

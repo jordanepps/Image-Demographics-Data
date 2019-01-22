@@ -72,7 +72,7 @@ function handleFacesMessage() {
 	});
 	const faceCount = IMAGEDATA.faces[0].length;
 	const msg =
-		faceCount === 1 ? '1 Face Deteced' : `${faceCount} Faces Detected`;
+		faceCount === 1 ? '1 Face Detected' : `${faceCount} Faces Detected`;
 	$(h2).html(msg);
 	return h2;
 }
