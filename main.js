@@ -409,6 +409,29 @@ function createSearchInput() {
 	$('#js-input-container').fadeIn(300);
 }
 
+function createFileInput() {
+	const input = $('<input type="file" name="file" id="js-file"/>');
+	$('#js-input-container').append(input);
+	handleFileInput();
+}
+
+function handleFileInput() {
+	$('#js-search').on('change', '#js-file', () => {
+		const file = $('#js-file')[0].files;
+		if (file.length > 0) {
+			const reader = new FileReader();
+			console.log(file);
+			reader.onloadend = function() {
+				console.log(reader.result);
+			};
+			reader.readAsDataURL(file[0]);
+			console.log(reader.readAsDataURL(file[0]));
+		}
+		// const file = $('#js-file')[0].files;
+		// const f = document.getElementById('js-file').files;
+	});
+}
+
 function handleImageChecked() {
 	$('label[for="Image"]').addClass('checked');
 	$('label[for="GitHub"]').removeClass('checked');
@@ -422,6 +445,7 @@ function handleImageChecked() {
 		})
 	);
 	createSearchInput();
+	createFileInput();
 }
 
 function handleGitHubChecked() {
