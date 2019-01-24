@@ -416,17 +416,44 @@ function createFileInput() {
 }
 
 function handleFileInput() {
-	$('#js-search').on('change', '#js-file', () => {
-		const file = $('#js-file')[0].files;
-		if (file.length > 0) {
+	$('#js-search').on('change', '#js-file', function() {
+		if (this.files && this.files[0]) {
+			const file = $('#js-file')[0].files;
+			console.log(this.files);
 			const reader = new FileReader();
-			console.log(file);
-			reader.onloadend = function() {
-				console.log(reader.result);
+			reader.onload = function(img) {
+				console.log(img);
+				console.log({ base64: reader.result.split('base64,')[1] });
+				app.models
+					.predict(appModel, { base64: reader.result.split('base64,')[1] })
+					.then(handleDemoData)
+					.catch(errorMessage);
 			};
 			reader.readAsDataURL(file[0]);
-			console.log(reader.readAsDataURL(file[0]));
 		}
+		// const f = document.getElementById('js-file').files;
+		// const file = $('#js-file')[0].files;
+		// const reader = new FileReader();
+		// reader.onloadend = function() {
+		// 	const imageData = this.results;
+		// 	// $('js-results').append(`<img src="${imageData}"/>`);
+		// 	// imageData = imageData.replace(/^data:image\/(.*);base64,/, '');
+		// 	console.log(imageData);
+		// };
+		// reader.readAsDataURL(f);
+		// if (file.length > 0) {
+		// 	const reader = new FileReader();
+		// 	console.log(file);
+		// 	reader.onloadend = function() {
+		// 		console.log(reader.result);
+		// 	};
+		// 	reader.readAsDataURL(file[0]);
+		// 	console.log(reader.readAsDataURL(file[0]));
+		// 	app.models
+		// 		.predict(appModel, { base64: reader.readAsDataURL(file[0]) })
+		// 		.then(handleDemoData)
+		// 		.catch(errorMessage);
+		// }
 		// const file = $('#js-file')[0].files;
 		// const f = document.getElementById('js-file').files;
 	});
