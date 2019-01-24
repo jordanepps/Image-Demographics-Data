@@ -272,11 +272,15 @@ function handleInvalidImage() {
 
 function handleDemoData(data) {
 	const demoData = data.outputs[0].data;
-	const image = data.outputs[0].input.data.image.url;
+	// const image = data.outputs[0].input.data.image.url;
+	const image = IMAGEDATA.src;
 	demoData.regions ? handleValidImage(demoData, image) : handleInvalidImage();
 }
 
-function getDemoData(link) {
+function getDemoData(link, isGitHub = true) {
+	if (!isGitHub) {
+		IMAGEDATA.src = link;
+	}
 	//clear old data from previous search
 	clearData(50);
 	//Getting data from Clarifai API
@@ -287,7 +291,8 @@ function getDemoData(link) {
 }
 
 function handleGitHubUser(user) {
-	user.message ? gitHubErrorMessage() : getDemoData(user.avatar_url);
+	IMAGEDATA.src = user.avatar_url || '';
+	user.message ? gitHubErrorMessage() : getDemoData(IMAGEDATA.src);
 }
 
 //Prevent user from typing spaces in input
@@ -329,7 +334,7 @@ function watchForm() {
 			.val()
 			.replace(/\s+/g, '');
 		$('#js-search').fadeOut(300);
-		radio === 'image' ? getDemoData(input) : getGitHubUser(input);
+		radio === 'image' ? getDemoData(input, false) : getGitHubUser(input);
 	});
 }
 
@@ -423,7 +428,8 @@ function handleFileInput() {
 			const reader = new FileReader();
 			reader.onload = function(img) {
 				console.log(img);
-				console.log({ base64: reader.result.split('base64,')[1] });
+				IMAGEDATA.src = img.target.result;
+				clearData(50);
 				app.models
 					.predict(appModel, { base64: reader.result.split('base64,')[1] })
 					.then(handleDemoData)
@@ -431,31 +437,6 @@ function handleFileInput() {
 			};
 			reader.readAsDataURL(file[0]);
 		}
-		// const f = document.getElementById('js-file').files;
-		// const file = $('#js-file')[0].files;
-		// const reader = new FileReader();
-		// reader.onloadend = function() {
-		// 	const imageData = this.results;
-		// 	// $('js-results').append(`<img src="${imageData}"/>`);
-		// 	// imageData = imageData.replace(/^data:image\/(.*);base64,/, '');
-		// 	console.log(imageData);
-		// };
-		// reader.readAsDataURL(f);
-		// if (file.length > 0) {
-		// 	const reader = new FileReader();
-		// 	console.log(file);
-		// 	reader.onloadend = function() {
-		// 		console.log(reader.result);
-		// 	};
-		// 	reader.readAsDataURL(file[0]);
-		// 	console.log(reader.readAsDataURL(file[0]));
-		// 	app.models
-		// 		.predict(appModel, { base64: reader.readAsDataURL(file[0]) })
-		// 		.then(handleDemoData)
-		// 		.catch(errorMessage);
-		// }
-		// const file = $('#js-file')[0].files;
-		// const f = document.getElementById('js-file').files;
 	});
 }
 
