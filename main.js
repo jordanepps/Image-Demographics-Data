@@ -35,7 +35,6 @@ function successMessage() {
 	const h2 = $(
 		'<h2 class="success-msg">Click on a face to view demographic information</h2>'
 	);
-	console.log($(h2));
 	$('#js-results').append($(h2));
 	$('#js-results').fadeIn(500);
 }
@@ -46,7 +45,6 @@ function errorMessage() {
 			? 'This user does not have a face in their profile picture'
 			: 'Please enter an image with at least one face';
 	setTimeout(() => {
-		console.log(msg);
 		$('#js-results').html(`<h3 class="error-msg">${msg}</h3>`);
 		loadTryAgainBtn();
 	}, 500);
@@ -223,7 +221,6 @@ function handleProbability(dataArr) {
 
 //Save demographics data as object for each face
 function handleFaceData(faceData) {
-	console.log('Saving image data');
 	//Assign object values to constants from json path
 	const ageArray = faceData.data.face.age_appearance.concepts;
 	const genderArray = faceData.data.face.gender_appearance.concepts;
@@ -272,7 +269,6 @@ function handleInvalidImage() {
 
 function handleDemoData(data) {
 	const demoData = data.outputs[0].data;
-	// const image = data.outputs[0].input.data.image.url;
 	const image = IMAGEDATA.src;
 	demoData.regions ? handleValidImage(demoData, image) : handleInvalidImage();
 }
@@ -284,10 +280,7 @@ function getDemoData(link, isGitHub = true) {
 	//clear old data from previous search
 	clearData(50);
 	//Getting data from Clarifai API
-	app.models
-		.predict(appModel, link)
-		.then(handleDemoData)
-		.catch(errorMessage);
+	getClarifaiData(link);
 }
 
 function handleGitHubUser(user) {
@@ -417,27 +410,33 @@ function createSearchInput() {
 function createFileInput() {
 	const input = $('<input type="file" name="file" id="js-file"/>');
 	$('#js-input-container').append(input);
-	handleFileInput();
 }
 
 function handleFileInput() {
 	$('#js-search').on('change', '#js-file', function() {
 		if (this.files && this.files[0]) {
-			const file = $('#js-file')[0].files;
-			console.log(this.files);
-			const reader = new FileReader();
-			reader.onload = function(img) {
-				console.log(img);
-				IMAGEDATA.src = img.target.result;
-				clearData(50);
-				app.models
-					.predict(appModel, { base64: reader.result.split('base64,')[1] })
-					.then(handleDemoData)
-					.catch(errorMessage);
-			};
-			reader.readAsDataURL(file[0]);
+			const file = $('#js-file')[0].files[0];
+			handleReaderOnLoad(file);
 		}
 	});
+}
+
+function handleReaderOnLoad(file) {
+	const reader = new FileReader();
+	reader.onload = function(img) {
+		IMAGEDATA.src = img.target.result;
+		clearData(50);
+		const imgBase64 = { base64: reader.result.split('base64,')[1] };
+		getClarifaiData(imgBase64);
+	};
+	reader.readAsDataURL(file);
+}
+
+function getClarifaiData(input) {
+	app.models
+		.predict(appModel, input)
+		.then(handleDemoData)
+		.catch(errorMessage);
 }
 
 function handleImageChecked() {
@@ -495,6 +494,7 @@ function handleScreenResize() {
 function loadApp() {
 	handleStartClick();
 	handleTryAgain();
+	handleFileInput();
 	watchForm();
 	handleLoadData();
 	handleScreenResize();
