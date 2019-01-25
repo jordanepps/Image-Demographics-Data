@@ -490,7 +490,7 @@ function handleImageChecked() {
 		.empty()
 		.hide();
 	$('#js-input-container').append(
-		$('<label>Paste link below</label>').attr({
+		$('<label>Paste image link or upload image below</label>').attr({
 			for: 'input',
 			class: 'input-label'
 		})
