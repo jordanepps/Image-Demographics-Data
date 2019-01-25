@@ -318,6 +318,58 @@ main {
     animation: fadein 2s;
 }
 
+#file {
+    display: none;
+}
+
+.input-box {
+    font-size: 22px;
+}
+
+.file-label strong {
+    cursor: pointer;
+}
+
+
+.file-input-container {
+    padding: 100px 20px;
+    max-width: 600px;
+    margin: auto;
+}
+
+.box-dragndrop,
+.box-uploading,
+.box-success,
+.box-error {
+    display: none;
+}
+
+.file-input-container.has-advanced-upload {
+    background-color: white;
+    outline: 2px dashed #34113F;
+    outline-offset: -10px;
+    transition: outline-offset .15s ease-in-out, background-color .15s linear;
+}
+
+.file-input-container.has-advanced-upload .box-dragndrop {
+    display: inline;
+}
+
+.file-input-container.is-dragover {
+    background-color: #34113F;
+    outline: 2px dashed white;
+    outline-offset: -20px;
+}
+
+
+.file-input-container.is-dragover .file-label strong,
+.file-input-container.is-dragover .file-label span {
+    color: white;
+}
+
+
+
+
 @-webkit-keyframes fadein {
     from {
         opacity: 0;

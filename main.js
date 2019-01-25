@@ -407,15 +407,59 @@ function createSearchInput() {
 	$('#js-input-container').fadeIn(300);
 }
 
+//Create the proper file input with container
 function createFileInput() {
-	const input = $('<input type="file" name="file" id="js-file"/>');
-	$('#js-input-container').append(input);
+	const div = $('<div>').attr({
+		id: 'js-file-input-container',
+		class: 'file-input-container'
+	});
+	div.append(
+		'<div class="input-box"><input type="file" name="file" id="file"/><label for="file" class="file-label"><strong>Choose a file</strong><span class="box-dragndrop"> or drag it here</span>.</label></div>'
+	);
+	div.append('<div class="box-uploading">Uploading</div>');
+	div.append('<div class="box-success">Done!</div>');
+	div.append('<div class="box-error">Error!</div>');
+	$('#js-input-container').append(div);
+	checkBrowserDragnDrop();
+}
+
+//Check if user's browswer can dragndrop files
+function checkBrowserDragnDrop() {
+	const isAdvancedUpload = function() {
+		const div = document.createElement('div');
+		return (
+			('draggable' in div || ('ondragstart' in div && 'ondrop' in div)) &&
+			'FormData' in window &&
+			'FileReader' in window
+		);
+	};
+	if (isAdvancedUpload) {
+		let droppedFile = false;
+		$('#js-file-input-container').addClass('has-advanced-upload');
+		$('#js-file-input-container')
+			.on('drag dragstart dragend dragover dragenter dragleave drop', function(
+				e
+			) {
+				e.preventDefault();
+				e.stopPropagation();
+			})
+			.on('dragover dragenter', function() {
+				$('#js-file-input-container').addClass('is-dragover');
+			})
+			.on('dragleave dragend drop', function() {
+				$('#js-file-input-container').removeClass('is-dragover');
+			})
+			.on('drop', function(e) {
+				droppedFile = e.originalEvent.dataTransfer.files[0];
+				handleReaderOnLoad(droppedFile);
+			});
+	}
 }
 
 function handleFileInput() {
-	$('#js-search').on('change', '#js-file', function() {
+	$('#js-search').on('change', '#file', function() {
 		if (this.files && this.files[0]) {
-			const file = $('#js-file')[0].files[0];
+			const file = $('#file')[0].files[0];
 			handleReaderOnLoad(file);
 		}
 	});
@@ -492,6 +536,7 @@ function handleScreenResize() {
 }
 
 function loadApp() {
+	// checkBrowserDragnDrop();
 	handleStartClick();
 	handleTryAgain();
 	handleFileInput();
